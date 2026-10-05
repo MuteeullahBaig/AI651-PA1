@@ -7,6 +7,3 @@ task2/results/*_model.pt
 report/*.aux
 report/*.log
 report/*.out
-# forecast values are not published (the handout forbids sharing forecast values); regenerate with task2/src/final.py and ensemble.py
-task2/results/*_submission.txt
-task2/results/*_forecast.csv

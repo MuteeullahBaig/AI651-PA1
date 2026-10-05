@@ -27,6 +27,18 @@
  "epochs_of_validation_run_that_chose_them": 5,
  "declared_epochs_E": 8,
  "refit_seconds": 24.526761200046167,
+ "forecast_summary": {
+  "min": 0.0,
+  "median": 147.86259480326464,
+  "max": 209.82890624110365,
+  "first_5": [
+   52.611074618450125,
+   58.630802925982636,
+   64.65178730732248,
+   66.41980323103482,
+   62.957579255069035
+  ]
+ },
  "last_observed_values": [
   19.99999237060547,
   23.0,
