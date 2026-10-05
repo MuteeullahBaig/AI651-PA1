@@ -73,14 +73,17 @@ def example_weeks(blocks=(2, 9, 15)):
     plt.close(fig)
 
 
-def final_forecast(tag="final"):
+def final_forecast(attempts=(("final", "attempt 1: single log-target model", "#a85f00", "--"),
+                             ("ensemble5", "attempt 2: mean of 5 log-target seeds", "#74848f", ":"),
+                             ("blend10", "attempt 3 (counted): 5 log + 5 raw-scale models", "#1d4e9e", "-"))):
     y, _ = load()
-    fc = pd.read_csv(RESULTS / f"{tag}_forecast.csv")
-    fig, ax = plt.subplots(figsize=(10, 2.8), layout="constrained")
+    fig, ax = plt.subplots(figsize=(10, 3.0), layout="constrained")
     ax.plot(np.arange(N_KNOWN - 336, N_KNOWN) + 1, y[-336:], color="#14202a", lw=1, label="last 336 observations")
-    ax.plot(fc.time_idx, fc.value, color="#1d4e9e", lw=1.5, label="submitted forecast (time_idx 43657–43824)")
+    for tag, label, color, ls in attempts:
+        fc = pd.read_csv(RESULTS / f"{tag}_forecast.csv")
+        ax.plot(fc.time_idx, fc.value, color=color, lw=1.6 if ls == "-" else 1.1, ls=ls, label=label)
     ax.axvline(N_KNOWN + 0.5, color="#999", ls=":", lw=0.8)
-    ax.set(xlabel="time_idx", ylabel="value", title="Final forecast")
+    ax.set(xlabel="time_idx", ylabel="value", title="Leaderboard forecasts for time_idx 43657–43824")
     ax.legend(fontsize=8, loc="upper left")
     fig.savefig(OUT / "final_forecast.pdf")
     plt.close(fig)

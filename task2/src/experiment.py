@@ -21,7 +21,8 @@ from data import (FIT_END, HORIZON, N_KNOWN, Preprocessor, WindowSampler, block_
 RESULTS = Path(__file__).resolve().parents[1] / "results"
 DEFAULTS = dict(seq_len=168, label_len=84, d_model=32, n_heads=4, e_layers=1, d_layers=1, d_ff=64,
                 kernel=25, factor=1.0, dropout=0.05, target="log", cov_mode="future",
-                lr=1e-3, batch=64, stride=1, lr_decay=0.5, feature_set="base", cov_kernel=1, anchor=0, trend_init="mean")
+                lr=1e-3, batch=64, stride=1, lr_decay=0.5, feature_set="base", cov_kernel=1, anchor=0, trend_init="mean",
+                loss_space="model")
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
@@ -58,6 +59,7 @@ def predict(model, sampler, pre, origins):
 def train(cfg, seed, max_epochs, patience=None, fit_end=FIT_END, evaluate=True, log=print):
     """Returns dict(history, best_epoch, best_metrics, params, state, seconds)."""
     y, pre, sampler = prepare(cfg, fit_end)
+    raw_scale = float(np.std(y[:fit_end]))          # only used when loss_space == "raw"
     origins = np.arange(cfg["seq_len"], fit_end - HORIZON + 1, cfg["stride"])
     val = validation_origins() if evaluate else None
     torch.manual_seed(seed)
@@ -76,7 +78,14 @@ def train(cfg, seed, max_epochs, patience=None, fit_end=FIT_END, evaluate=True, 
         losses = []
         for chunk in order.split(cfg["batch"]):
             x_enc, m_enc, m_dec, target = sampler.batch(chunk.numpy())
-            loss = (model(x_enc, m_enc, m_dec).squeeze(-1) - target).square().mean()
+            out = model(x_enc, m_enc, m_dec).squeeze(-1)
+            if cfg.get("loss_space", "model") == "raw" and cfg["target"] == "log":
+                # Loss on the original scale so the model learns the conditional MEAN, not a median-like
+                # back-transform. Values are divided by the training std of y to keep the loss near 1.
+                to_raw = lambda z: torch.expm1(torch.clamp(z * pre.sd + pre.mu, max=8.0))
+                loss = ((to_raw(out) - to_raw(target)) / raw_scale).square().mean()
+            else:
+                loss = (out - target).square().mean()
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)

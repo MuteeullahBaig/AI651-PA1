@@ -36,6 +36,8 @@ Leaderboard attempts:
 
 - **Attempt 1, the counted best:** `final_submission.txt`. P = 8,577, E = 6, RMSE 101.10.
 - **Attempt 2:** `ensemble5_submission.txt`, the mean of seeds 0–4. It is built with `python ensemble.py --tag ensemble5 --members final final_s1 final_s2 final_s3 final_s4` after running `final.py` for each seed. P = 42,885, E = 31, RMSE 106.56.
+- **Attempt 3, the counted best:** `blend10_submission.txt`. It is the mean of the 5 log-target refits (`final`, `final_s1`…`final_s4`) and 5 raw-scale refits (`std_s0`…`std_s4`, built by `final.py … --set … target=standard`). P = 85,770, E = 75, RMSE 85.04.
+- **Attempts 4 and 5:** `blend15_submission.txt`. It is attempt 3 plus 5 refits trained with the loss on the raw scale (`rawloss_s0`…`rawloss_s4`, built by `--set … loss_space=raw`). P = 128,655, E = 106, RMSE 89.69. Attempt 5 resubmitted the same forecast by accident.
 
 ## What is in `task2/results/`
 

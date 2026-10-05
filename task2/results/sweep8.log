@@ -1,0 +1,3 @@
+[s8_std] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'standard', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 5, 'anchor': 1, 'trend_init': 'mean'}
+[s8_std] params 8577 | block RMSE 62.81 ± 0.66 | MAE 48.93 | sMAPE 73.6 | best epochs [2, 7, 2, 3, 7]
+SWEEP DONE

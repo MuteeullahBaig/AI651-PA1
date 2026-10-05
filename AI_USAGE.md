@@ -37,6 +37,23 @@ desktop app, with access to the assignment folder, on 25–26 September 2026.
 - **Attempt 2.** After attempt 1's score showed the penalty was tiny, the AI checked on the validation blocks that averaging 5 seeds helps (56.7 vs 60.8, better on 18/18 blocks) and prepared that forecast. I submitted it: RMSE 106.56, score 106.5777. Attempt 1 remains the counted best.
 - The AI recommended stopping at two submissions.
 
+## Post-mortem and attempt 3 (5 October 2026)
+
+Prompt: "Why Am I so low on the leaderboard?" (with the class leaderboard pasted: rank 37 of 40).
+
+- **Diagnosis (validation only).** The AI found the log-target models under-predict the level: their validation forecast mean is 84.8 against a true 96.6, with large misses on busy weeks. A single scaling factor did not fix it.
+- **Raw-scale models.** It trained the same configuration on the raw-scale target (stage 8). These over-predict instead (mean 104.3).
+- **The fix.** It averaged 5 log and 5 raw-scale models. That blend is the best on validation (block RMSE 55.2) and unbiased (mean 94.6).
+- **Submission.** I submitted it as attempt 3: RMSE 85.04, rank 31. P = 85,770, E = 75.
+- **Follow-up.** Prompt: "Why shouldn't we try to improve it when we have the option?" The AI agreed to keep improving, provided every choice is made on validation rather than by hidden-week scores.
+
+## Attempts 4 and 5 (5 October 2026)
+
+- The AI tested wider models, a longer context, and a log-target model trained with its loss on the raw scale (stages 9–10).
+- Only the raw-loss models helped, and only as extra ensemble members. The 15-model blend scored 54.4 against 55.2 on validation, a gain within noise.
+- I submitted the 15-model blend: RMSE 89.69. Attempt 5 resubmitted the same forecast by accident.
+- Attempt 3 (RMSE 85.04) remains the counted best.
+
 ## Final review (5 October 2026)
 
 Prompt: "please review the assignment document and submission and make sure nothing is incomplete except things related to submission of files etc"

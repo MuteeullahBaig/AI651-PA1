@@ -34,6 +34,10 @@ LABELS = {
     "s6_tlast": "trend start = end of MA trend", "s6_tlastobs": "trend start = last observation",
     "s6_anchor_tlast": "anchoring + trend start = end of MA trend",
     "s7_decay": "trend start decays from last value to mean", "s7_anchor_decay": "anchoring + decaying trend start",
+    "s8_std": "final configuration, raw-scale target (post-mortem)",
+    "s9_std_d32": "raw-scale target, d=32", "s9_log_d32": "log target, d=32",
+    "s9_std_seq336": "raw-scale target, context 336", "s9_log_seq336": "log target, context 336",
+    "s10_rawloss": "log target, loss on raw scale",
 }
 
 
@@ -48,13 +52,13 @@ def thousands(n):
 
 def sweep_table():
     lines = []
-    for stage in ("s1", "s2", "s3", "s4", "s5", "s6", "s7"):
+    for stage in ("s1", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10"):
         rows = [(t, load(t)) for t in LABELS if t.startswith(stage + "_")]
         rows = [(t, r) for t, r in rows if r]
         if not rows:
             continue
         seeds = len(rows[0][1]["seeds"])
-        lines.append(r"\multicolumn{6}{l}{\emph{Stage " + stage[1] + f" ({seeds} seeds each)" + "}}" + NL)
+        lines.append(r"\multicolumn{6}{l}{\emph{Stage " + stage[1:] + f" ({seeds} seeds each)" + "}}" + NL)
         best = min(r["block_rmse_mean"] for _, r in rows)
         for t, r in rows:
             mean = f"{r['block_rmse_mean']:.1f}"

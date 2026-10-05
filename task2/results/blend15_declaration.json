@@ -1,0 +1,96 @@
+{
+ "members": [
+  {
+   "tag": "final",
+   "seed": 0,
+   "P": 8577,
+   "E": 6
+  },
+  {
+   "tag": "final_s1",
+   "seed": 1,
+   "P": 8577,
+   "E": 5
+  },
+  {
+   "tag": "final_s2",
+   "seed": 2,
+   "P": 8577,
+   "E": 8
+  },
+  {
+   "tag": "final_s3",
+   "seed": 3,
+   "P": 8577,
+   "E": 6
+  },
+  {
+   "tag": "final_s4",
+   "seed": 4,
+   "P": 8577,
+   "E": 6
+  },
+  {
+   "tag": "std_s0",
+   "seed": 0,
+   "P": 8577,
+   "E": 7
+  },
+  {
+   "tag": "std_s1",
+   "seed": 1,
+   "P": 8577,
+   "E": 11
+  },
+  {
+   "tag": "std_s2",
+   "seed": 2,
+   "P": 8577,
+   "E": 7
+  },
+  {
+   "tag": "std_s3",
+   "seed": 3,
+   "P": 8577,
+   "E": 8
+  },
+  {
+   "tag": "std_s4",
+   "seed": 4,
+   "P": 8577,
+   "E": 11
+  },
+  {
+   "tag": "rawloss_s0",
+   "seed": 0,
+   "P": 8577,
+   "E": 5
+  },
+  {
+   "tag": "rawloss_s1",
+   "seed": 1,
+   "P": 8577,
+   "E": 6
+  },
+  {
+   "tag": "rawloss_s2",
+   "seed": 2,
+   "P": 8577,
+   "E": 6
+  },
+  {
+   "tag": "rawloss_s3",
+   "seed": 3,
+   "P": 8577,
+   "E": 7
+  },
+  {
+   "tag": "rawloss_s4",
+   "seed": 4,
+   "P": 8577,
+   "E": 7
+  }
+ ],
+ "trainable_parameters_P": 128655,
+ "declared_epochs_E": 106
+}
