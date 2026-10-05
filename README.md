@@ -29,12 +29,13 @@ bash sweep.sh "0 1 2" "<tag>:<key=value ...>"          # any configuration, e.g.
 python final.py --tag final --epochs <E_refit> --validation-epochs <E_val> --seed 0 --set <chosen configuration>
 ```
 
-`final.py` prints the trainable parameter count P and the declared epochs E, and writes
-`results/final_submission.txt`: 168 comma-separated values for `time_idx` 43657 to 43824, in chronological order.
+`final.py` prints the trainable parameter count P and the declared epochs E, and writes `results/<tag>_declaration.json` (P and E). It also writes `results/<tag>_submission.txt`: 168 comma-separated values for `time_idx` 43657 to 43824, in chronological order.
+
+**The forecast values are not published in this repository.** The handout forbids sharing forecast values with other students, so `*_submission.txt` and `*_forecast.csv` are gitignored. Running the commands below regenerates them. The P and E declarations are included.
 
 Leaderboard attempts:
 
-- **Attempt 1, the counted best:** `final_submission.txt`. P = 8,577, E = 6, RMSE 101.10.
+- **Attempt 1:** `final_submission.txt`. P = 8,577, E = 6, RMSE 101.10.
 - **Attempt 2:** `ensemble5_submission.txt`, the mean of seeds 0–4. It is built with `python ensemble.py --tag ensemble5 --members final final_s1 final_s2 final_s3 final_s4` after running `final.py` for each seed. P = 42,885, E = 31, RMSE 106.56.
 - **Attempt 3, the counted best:** `blend10_submission.txt`. It is the mean of the 5 log-target refits (`final`, `final_s1`…`final_s4`) and 5 raw-scale refits (`std_s0`…`std_s4`, built by `final.py … --set … target=standard`). P = 85,770, E = 75, RMSE 85.04.
 - **Attempts 4 and 5:** `blend15_submission.txt`. It is attempt 3 plus 5 refits trained with the loss on the raw scale (`rawloss_s0`…`rawloss_s4`, built by `--set … loss_space=raw`). P = 128,655, E = 106, RMSE 89.69. Attempt 5 resubmitted the same forecast by accident.
@@ -47,7 +48,7 @@ Leaderboard attempts:
 | `s1_*` … `s7_*`, `sweep1.log` … `sweep7.log` | The seven search stages, per seed and per epoch (report §2.5) |
 | `s5_anchor.json`, `abl2_past.json`, `abl2_none.json`, `ablation2.log` | The final configuration and the two other arms of the covariate ablation (report §2.6) |
 | `abl_future.json`, `abl_past.json`, `abl_none.json`, `ablation.log` | An earlier ablation run, before anchoring was added; superseded by the row above and kept for transparency |
-| `final_*`, `final_s1_*` … `final_s4_*`, `ensemble5_*` | The full-history refits, the submitted forecasts, and the P/E declarations (report §2.7) |
+| `*_declaration.json` (`final*`, `std_s*`, `rawloss_s*`, `ensemble5`, `blend10`, `blend15`) | P and E for every full-history refit and submitted ensemble (report §2.7); the forecast values themselves are gitignored |
 
 ## Data
 
