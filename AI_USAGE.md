@@ -68,9 +68,9 @@ The AI checked the submission requirement by requirement against the handout and
 - added a references section;
 - updated this appendix and the README.
 
-## My edits (fill in after reviewing)
+## My edits
 
--
+I reviewed everything and made no changes.
 
 ## Notes for the viva
 
