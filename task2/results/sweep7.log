@@ -1,0 +1,5 @@
+[s7_decay] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 5, 'anchor': 0, 'trend_init': 'decay'}
+[s7_decay] params 8578 | block RMSE 70.98 ± 0.77 | MAE 46.51 | sMAPE 52.1 | best epochs [2, 1, 3, 4, 8]
+[s7_anchor_decay] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 5, 'anchor': 1, 'trend_init': 'decay'}
+[s7_anchor_decay] params 8578 | block RMSE 271.69 ± 14.31 | MAE 217.97 | sMAPE 95.1 | best epochs [2, 8, 2, 3, 6]
+SWEEP DONE

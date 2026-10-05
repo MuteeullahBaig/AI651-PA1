@@ -1,0 +1,62 @@
+{
+ "no covariates": {
+  "block_rmse": 87.33679256579188,
+  "block_mae": 65.47837115955667,
+  "block_smape": 78.23731445381632
+ },
+ "past 24 steps only (all variables)": {
+  "block_rmse": 86.36361460095401,
+  "block_mae": 64.67604652300297,
+  "block_smape": 77.31843428599558
+ },
+ "horizon only (all variables)": {
+  "block_rmse": 58.99659907449921,
+  "block_mae": 40.770082842255086,
+  "block_smape": 50.1600868221843
+ },
+ "past + horizon (all variables)": {
+  "block_rmse": 58.10651823039936,
+  "block_mae": 39.89811166811076,
+  "block_smape": 49.590127096195324
+ },
+ "past + horizon, only A,B,C": {
+  "block_rmse": 65.39181866633959,
+  "block_mae": 45.22971651526629,
+  "block_smape": 56.20129367979196
+ },
+ "past + horizon, only D": {
+  "block_rmse": 72.77849614072238,
+  "block_mae": 53.376780644609504,
+  "block_smape": 64.2281604778057
+ },
+ "past + horizon, only E,F": {
+  "block_rmse": 87.69840346106237,
+  "block_mae": 65.68356734831455,
+  "block_smape": 77.91630410421685
+ },
+ "past + horizon, only G-J": {
+  "block_rmse": 75.55895544108037,
+  "block_mae": 54.276540076860705,
+  "block_smape": 65.01766331649006
+ },
+ "past + horizon, all except A,B,C": {
+  "block_rmse": 69.63760115125785,
+  "block_mae": 49.7338695890348,
+  "block_smape": 59.01145375165359
+ },
+ "past + horizon, all except D": {
+  "block_rmse": 61.17818093057795,
+  "block_mae": 41.75625782442613,
+  "block_smape": 51.83075582527335
+ },
+ "past + horizon, all except E,F": {
+  "block_rmse": 59.01036517296513,
+  "block_mae": 40.433894355165,
+  "block_smape": 49.77504864157695
+ },
+ "past + horizon, all except G-J": {
+  "block_rmse": 57.63505930926184,
+  "block_mae": 40.12508820573542,
+  "block_smape": 51.221330424519614
+ }
+}

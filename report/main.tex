@@ -1,0 +1,37 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{microtype}
+\usepackage[hidelinks]{hyperref}
+\setlist{nosep,leftmargin=1.4em}
+\setlength{\parskip}{4pt}
+\setlength{\parindent}{0pt}
+\captionsetup{font=small,labelfont=bf}
+\newcommand{\ms}{\,m/s$^2$}
+\newcommand{\mss}{\,(m/s$^2$)$^2$}
+\newcommand{\todo}[1]{\textcolor{red}{[#1]}}
+\makeatletter
+\newcommand{\inputrows}[1]{\@@input #1 }   % expandable input for generated table rows
+\makeatother
+\def\UrlBreaks{\do\/\do\_\do\-\do\.}      % let long paths wrap
+
+\title{AI651 -- Deep Learning for Space, Time and Graphs\\[2pt] \large Assignment 1: Forecasting across heterogeneous sensors, and an Autoformer leaderboard}
+\author{Muteeullah Baig \quad 25280036\\[2pt]
+\small Code: \url{https://github.com/MuteeullahBaig/AI651-PA1}}
+\date{2 October 2026}
+
+\begin{document}
+\maketitle
+
+\input{task1}
+\input{task2}
+\input{references}
+\input{appendix_ai}
+
+\end{document}

@@ -1,0 +1,163 @@
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.4 Baselines and a linear probe of the external file}
+
+Baselines calibrate what the Autoformer has to earn; only an Autoformer is submitted. Zeng et al.\ (2023) found simple linear models beating Transformer forecasters on standard benchmarks, so a linear model is the bar to clear. A direct 168-output ridge on 168 log-lags doubles as a cheap probe of \emph{which} external variables and \emph{which portions} carry signal. All numbers are validation block RMSE, MAE and sMAPE.
+
+\begin{table}[H]\centering\small
+\caption{Baselines (validation block metrics).}
+\begin{tabular}{lrrr}
+\toprule
+Forecast & RMSE & MAE & sMAPE\\
+\midrule
+\inputrows{generated/baseline_rows.tex}
+\end{tabular}
+\end{table}
+
+\begin{table}[H]\centering\small
+\caption{Linear probe: ridge on 168 log-lags plus the listed covariate blocks (``past'' = the 24 steps before the origin, ``horizon'' = the 168 forecast steps).}
+\begin{tabular}{lrrr}
+\toprule
+Covariates added & RMSE & MAE & sMAPE\\
+\midrule
+\inputrows{generated/probe_rows.tex}
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+  \item \textbf{The value is in the horizon.} Past covariates barely help (87.3$\to$86.4). The values over the 168 forecast steps cut error by a third (87.3$\to$59.0).
+  \item \textbf{Which variables.} A, B and C carry the most signal, then D and the G--J category. E and F carry none.
+  \item \textbf{Target-only baselines.} None of them gets below 87.
+\end{itemize}
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.5 Model search}
+
+\begin{table}[H]\centering\small
+\caption{Every Autoformer configuration tried, in order. Values are validation block metrics, mean $\pm$ s.d.\ over seeds. The last column is the early-stopping epoch for each seed.}
+\resizebox{\linewidth}{!}{\begin{tabular}{lrrrrl}
+\toprule
+Configuration & Params & Block RMSE & MAE & sMAPE & Best epochs \\
+\midrule
+\inputrows{generated/sweep_rows.tex}
+\end{tabular}}
+\end{table}
+
+What the search showed:
+\begin{enumerate}
+  \item \textbf{Small beats large.} Width 32 (22k parameters) overfits within one epoch. Width 16 (5.9k) is better and steadier, and width 8 (1.6--3k) is within seed noise of it. Extra encoder or decoder layers, context 96 or 336, kernel 49 and more delays ($c=3$) do not help.
+  \item \textbf{Log target.} At width 16 the log and raw-scale targets tie on RMSE (65.0 vs 65.4). The log target is far better on MAE and sMAPE (45 vs 52, 54 vs 71), so I kept it.
+  \item \textbf{Covariates need temporal context.} Two additions each lower error: a kernel-5 convolution in the covariate embedding, and engineered covariates (D's per-step increment, reconstructed from its resets, plus 6- and 24-step trailing means). Together they bring RMSE to 62.2 $\pm$ 3.1 over 5 seeds. The probe's advantage came from mapping covariates across time; the per-step linear embedding could not.
+  \item \textbf{Anchoring.} The model largely ignored the last observation: at step 1 its RMSE was 67 against persistence's 15. Anchoring (subtracting the last value from the input window and adding it back) gives 60.8 $\pm$ 1.8. It is better on 4 of 5 paired seeds, lowers the seed spread, and makes forecasts start at the latest level.
+  \item \textbf{Negative results, kept on purpose.} Replacing the decoder's \emph{mean} trend start with the last value or the end of the moving-average trend breaks the model (147--159). A start that decays from the last value to the mean also fails (71; 272 with anchoring).
+    \begin{itemize}
+      \item The decoder sees only the seasonal stream, so the trend start fixes the level of all 168 steps.
+      \item The paper's mean start is the right bias for this mean-reverting series.
+      \item The log-scale training loss rewards persistence far more than the raw-scale RMSE does.
+    \end{itemize}
+\end{enumerate}
+Early stopping used the same 18 blocks as model selection, so the chosen configuration's validation score is somewhat optimistic.
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.6 What the external file did (required ablation)}
+
+The final configuration was trained under three covariate regimes. The seeds (0--4), the 18 validation blocks and every other setting are the same across arms. ``Past values only'' blanks the horizon part of the decoder's covariate input.
+
+\begin{table}[H]\centering\small
+\caption{Covariate ablation. RMSE, MAE and sMAPE are validation block metrics. The last column is the paired per-seed RMSE reduction against ``no external data'', with the number of seeds that improved.}
+\resizebox{\linewidth}{!}{\begin{tabular}{lrrrrll}
+\toprule
+External data & Params & Block RMSE & MAE & sMAPE & RMSE per seed (0--4) & Gain vs none \\
+\midrule
+\inputrows{generated/ablation_rows.tex}
+\end{tabular}}
+\end{table}
+
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{figures/task2/ablation_blocks.pdf}
+\caption{Validation RMSE per block for the three arms (5 seeds, min--max bars) and two references.}
+\end{figure}
+
+\textbf{Finding.} The external file helps, and entirely through its \emph{horizon} values. With them, RMSE falls by 31.8 $\pm$ 1.6 on every seed (92.6$\to$60.8). Past values alone move it by 0.6 $\pm$ 1.8, which is within noise. This matches the linear probe.
+
+\textbf{Why the horizon values matter.} The series builds up over days and then collapses abruptly. The future covariates indicate \emph{when} a collapse is coming (Figure~\ref{fig:weeks}). Without them, the Autoformer does no better than the naive ``mean of last 168'' baseline (92.6 vs 91.0).
+
+\textbf{Where the values enter the model.} Known-future values can only help if they reach the decoder's 168 future positions. They do so here through the covariate embedding that replaces the official time-mark path.
+
+\textbf{Comparison with the linear reference.} Ridge with all covariates reaches 58.1 using about 350k coefficients. The Autoformer gets within 3 points with 8.6k parameters.
+
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{figures/task2/example_weeks.pdf}
+\caption{Three validation weeks: truth, the final configuration (5 seeds), the no-covariate model, and the linear reference.}
+\label{fig:weeks}
+\end{figure}
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.7 Final model, submission, $P$ and $E$}
+
+\textbf{Configuration.} Autoformer with $d_{\text{model}}=16$, 4 heads, 1 encoder and 1 decoder layer, $d_{ff}=32$, moving-average kernel 25 and $c=1$. Context 168, label length 84, prediction length 168. Log target, anchoring, engineered covariates with a kernel-5 covariate embedding, and horizon covariates in the decoder.
+
+\textbf{Refit and forecast.} The model was refit on all 43{,}656 steps, with scaling refitted on all of them, using seed 0 for 2 epochs. Two is the median best epoch over 5 seeds. It then forecasts \texttt{time\_idx} 43657--43824 (\path{task2/src/final.py}).
+
+\textbf{Declared values.}
+\begin{itemize}
+  \item $\boldsymbol{P = 8{,}577}$ trainable parameters, from \texttt{sum(p.numel() \ldots\ if p.requires\_grad)}.
+  \item $\boldsymbol{E = 6}$ epochs. This counts both runs, as the handout asks: the 2 refit epochs, plus the 4 epochs that seed 0's validation run spent before early stopping.
+\end{itemize}
+
+\textbf{Files.} The 168 values, in chronological order, are in \path{task2/results/final_submission.txt}. The declaration is in \path{final_declaration.json}.
+
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{figures/task2/final_forecast.pdf}
+\caption{Attempt 1, the leaderboard's counted attempt, after the last 336 observations.}
+\end{figure}
+
+\textbf{Submission strategy.} A single block is a noisy measurement. The validation per-block RMSE of this configuration ranges from 28 to 107 across the 18 weeks, and the spread between blocks (s.d.\ 24.6) is almost three times the spread between seeds (9.2). I therefore decided on validation and submitted only to confirm.
+
+\begin{table}[H]\centering\small
+\caption{Leaderboard attempts (hidden week, time\_idx 43657--43824).}
+\begin{tabular}{llrrrrrr}
+\toprule
+Attempt & Model & $P$ & $E$ & RMSE & MAE & sMAPE & Score \\
+\midrule
+1 (best, counted) & Single refit (seed 0) & 8{,}577 & 6 & 101.10 & 61.40 & 53.79\% & 101.1060 \\
+2 & Mean of 5 seed refits & 42{,}885 & 31 & 106.56 & 66.76 & 59.37\% & 106.5777 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{Attempt 1.} The RMSE is well above the validation mean of 60.8, but inside the range of single validation weeks (28--107). sMAPE is close to its validation value (48.6), while RMSE is not. That points to a week with larger-than-usual spikes rather than a model that fails across the board.
+
+\textbf{Why a second attempt.} Attempt 1's score exceeded its RMSE by only 0.003, which showed that at this scale the cost penalty is negligible. I then tested, on the validation blocks only, whether averaging the five seeds' forecasts helps.
+\begin{itemize}
+  \item Block RMSE fell from 60.8 (the average single seed) to 56.7, and the average won on all 18 blocks.
+  \item I submitted this 5-seed average (\path{task2/src/ensemble.py}).
+  \item As the handout requires, $P$ and $E$ are summed over the members: $E=\sum_s(2 + e_s)=31$, where $e_s$ is the number of epochs seed $s$'s validation run spent.
+\end{itemize}
+
+\textbf{What attempt 2 showed.} It scored worse on the hidden week (106.56).
+\begin{itemize}
+  \item The averaged forecast is smoother, with a peak of 161 against 205, and this week rewarded the sharper single-seed peak.
+  \item This is the single-block noise the validation analysis predicted: a change that wins on 18 of 18 validation weeks can still lose on one.
+  \item The site ranks each student by their \emph{best} attempt (the handout says the last), so attempt 1 counts. I stopped at two submissions rather than choose further models on one week.
+  \item From the two scores, the penalty is roughly 0.0005 per epoch with a near-zero weight on parameters. This is approximate, because the scores are rounded to four decimals.
+\end{itemize}
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.8 Where the three metrics disagree}
+
+\begin{itemize}
+  \item \textbf{Log vs raw-scale target.} Training on the log target instead of the raw scale leaves RMSE unchanged (65.0 vs 65.4). It improves MAE by 13\% and sMAPE by 24\%. Back-transforming a log-scale mean gives a median-like forecast, which MAE and sMAPE reward. RMSE, dominated by the spikes, is indifferent.
+  \item \textbf{Persistence vs seasonal naive.} The metrics rank them in opposite orders. Persistence is worse than seasonal naive at lag 24 on RMSE (135.2 vs 123.4) but better on sMAPE (93.7 vs 99.3). Copying yesterday's spikes into the wrong hours is punished heavily by a relative metric.
+  \item \textbf{Pooled vs per-block RMSE.} Pooled RMSE weights the few high-level weeks more heavily, which is why it exceeds the mean per-block RMSE, for example 98.2 vs 91.0 for the mean of the last 168.
+\end{itemize}
+Leaderboard ranking uses RMSE, so model choices were made on block RMSE; MAE and sMAPE served as tie-breakers.
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.9 Reflections grounded in these experiments (optional questions)}
+
+\begin{itemize}
+  \item \textbf{Q2.7 (known-past vs known-future covariates).} Here availability decides \emph{both} where a variable enters and how much it helps. The same file gives $-0.6$ RMSE through the encoder and $-31.8$ when its horizon values reach the decoder's future positions. A covariate that only describes current conditions, like the ones here, is useless if known only up to the origin, and powerful if known across the horizon.
+  \item \textbf{Q2.6 (window-relative normalization).} Anchoring removes the window's level, which is exactly what the model should adapt to at short horizons. The level still matters at long horizons, and the mean trend start supplies it; replacing that start with the last value (Section 2.5) shows what is lost without it.
+  \item \textbf{Q2.8 (no calendar).} The 24-step cycle was recovered from the periodogram without timestamps. Trusting it requires stationarity of that cycle, and here its ACF bump is small, so the model leans on covariates instead.
+  \item \textbf{Q2.2 and Q2.3 (fixed-kernel, repeated decomposition).} Abrupt collapses are level shifts, which a kernel-25 average smears. That is one reason the covariates, not the decomposition, carry the timing of drops.
+\end{itemize}

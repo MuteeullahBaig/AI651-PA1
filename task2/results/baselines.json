@@ -1,0 +1,50 @@
+{
+ "Persistence (last value)": {
+  "block_rmse": 135.24018401076626,
+  "block_mae": 110.9626322751323,
+  "block_smape": 93.65060907297436,
+  "pooled_rmse": 168.22756676471522
+ },
+ "Mean of last 24": {
+  "block_rmse": 111.82408889780632,
+  "block_mae": 90.11403218694886,
+  "block_smape": 93.46847521821684,
+  "pooled_rmse": 125.73776861220975
+ },
+ "Mean of last 168": {
+  "block_rmse": 90.96984123668987,
+  "block_mae": 74.29087537792894,
+  "block_smape": 82.4546533385027,
+  "pooled_rmse": 98.24978806585545
+ },
+ "Seasonal naive, 24": {
+  "block_rmse": 123.39868284053497,
+  "block_mae": 96.95171957671958,
+  "block_smape": 99.30607756257895,
+  "pooled_rmse": 136.84321977702
+ },
+ "Seasonal naive, 168": {
+  "block_rmse": 126.32158184693678,
+  "block_mae": 98.19378306878306,
+  "block_smape": 98.83626702206192,
+  "pooled_rmse": 136.8385702649999
+ },
+ "7-day mean daily profile": {
+  "block_rmse": 91.01379639484915,
+  "block_mae": 73.61848072562358,
+  "block_smape": 81.68611007342545,
+  "pooled_rmse": 98.24836638132281
+ },
+ "Ridge on 168 lags": {
+  "block_rmse": 87.33679256579188,
+  "block_mae": 65.47837115955667,
+  "block_smape": 78.23731445381632,
+  "pooled_rmse": 96.23826560567008
+ },
+ "Ridge on 168 lags + covariates": {
+  "block_rmse": 58.9922599694594,
+  "block_mae": 40.8216262679652,
+  "block_smape": 51.682353943987856,
+  "pooled_rmse": 64.20859709049975
+ }
+}

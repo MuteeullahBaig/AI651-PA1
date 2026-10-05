@@ -1,0 +1,82 @@
+\section*{Task 2 -- Autoformer leaderboard challenge}
+
+All code is in \path{task2/src/}. Every number below is read from the JSON logs in \path{task2/results/}, except the leaderboard scores, which are copied from the leaderboard site. Unless stated otherwise, metrics are on the 18 validation blocks described in Section 2.2.
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.1 What the data look like}
+
+\begin{figure}[H]\centering
+\includegraphics[width=\linewidth]{figures/task2/eda.pdf}
+\caption{The target series. Top: full history (validation region shaded) and the last four 168-step blocks. Bottom: autocorrelation and periodogram.}
+\end{figure}
+
+\begin{itemize}
+  \item \textbf{Target.} There are 43{,}656 integer, non-negative values with no gaps. The distribution is heavy-tailed: median 73, 99th percentile 418, maximum 994. The series builds up over several days and then collapses abruptly, which is why a single 168-step block can have a large RMSE.
+  \item \textbf{Memory is short.} The autocorrelation is 0.97 at lag 1, 0.40 at lag 24, 0.16 at lag 48 and about 0.03 at lag 168. Persistence is therefore useful for a few steps only.
+  \item \textbf{Periodic structure, recovered from the data.} The periodogram has one sharp line at exactly 24 steps, a small bump at 24 in the ACF, and power at very long periods (about 8{,}700--11{,}000 steps). Weekly-scale structure (168) is weak, and no single cycle dominates, as the handout warns.
+  \item \textbf{External file.} It has ten variables covering all 43{,}824 steps.
+  \begin{itemize}
+    \item A, B and C are continuous.
+    \item D, E and F are \emph{running totals that reset}. Every one of D's 8{,}283 resets coincides with a change in the categorical variable, so D accumulates while the category stays fixed.
+    \item G--J are one-hot: exactly one is active at every step.
+    \item The strongest same-step correlations with $\log(1+y)$ are D ($-0.35$), H ($-0.35$), A ($+0.31$) and I ($+0.23$).
+  \end{itemize}
+\end{itemize}
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.2 Validation protocol and preprocessing}
+
+\begin{itemize}
+  \item \textbf{Rolling-origin validation.} The last 18 non-overlapping 168-step blocks of the history (steps 40{,}632--43{,}655) are forecast from 18 origins. Each forecast uses the true context before its origin, as a leaderboard forecast would (time-series cross-validation, Hyndman \& Athanasopoulos \S5.10).
+    \begin{itemize}
+      \item The \textbf{model score} is the mean over blocks of each block's RMSE, because one block is what one leaderboard submission measures. Pooled RMSE, MAE and sMAPE are logged as well.
+      \item \textbf{Why 18 blocks.} A single 168-step block is a very noisy estimate for this series. The final model's per-block RMSE ranges from 28 to 107 across the 18 blocks.
+    \end{itemize}
+  \item \textbf{No leakage.} Training windows only have targets before step 40{,}632. Every scaling statistic is fitted on that range only.
+  \item \textbf{Target transform.} The target is modelled as a z-score, either of $\log(1+y)$ or of $y$. Predictions are transformed back and clipped at zero.
+  \item \textbf{Covariates.} A, B and C are z-scored. The counters D, E and F are $\log(1+\cdot)$-transformed, then z-scored. G--J stay 0/1.
+  \item \textbf{Engineered covariates (final model).} Nine columns are added, all computed from the external file at every step, so they are equally available over the horizon:
+    \begin{itemize}
+      \item $\log(1+\Delta D)$, D's per-step increment, reconstructed by restarting the difference whenever the G--J category changes;
+      \item trailing 6- and 24-step means of A, B, C and $\log(1+\Delta D)$.
+    \end{itemize}
+    The intuition is that the target responds to conditions accumulated over the preceding hours, not only to the current step. All statistics are fitted on the training range.
+  \item \textbf{Seeds.} Every comparison uses the same seeds, blocks and windows. Results are reported as mean $\pm$ standard deviation over seeds.
+\end{itemize}
+
+% ---------------------------------------------------------------------------------------------
+\subsection*{2.3 Model}
+
+I wrote a compact Autoformer (\path{task2/src/autoformer.py}) following Wu et al.\ (2021), \S\S3.1--3.2, and the structure of the official implementation (\url{https://github.com/thuml/Autoformer}). No code was copied. It contains both defining mechanisms.
+
+\textbf{(a) Progressive series decomposition.}
+\begin{itemize}
+  \item A replicate-padded moving average (kernel 25) runs after every residual sublayer in the encoder and the decoder.
+  \item The encoder keeps only the seasonal part.
+  \item The decoder is initialized with the seasonal and trend parts of the last \texttt{label\_len} inputs, followed by zeros and the input mean over the 168 future steps.
+  \item The decoder accumulates the three trends extracted in each layer, projected by a circular \texttt{Conv1d}.
+\end{itemize}
+
+\textbf{(b) Auto-Correlation instead of dot-product attention.} This is used both for self-correlation and for encoder--decoder correlation.
+\begin{itemize}
+  \item It computes $R(\tau)$ for every delay with \texttt{rfft}/\texttt{irfft}.
+  \item It keeps the top $k=\lfloor c\ln L\rfloor$ delays.
+  \item It aggregates shifted copies of the values with softmax weights.
+\end{itemize}
+
+\textbf{Three deliberate differences from the official code.}
+\begin{itemize}
+  \item \textbf{External variables use the time-mark path.} The official code reserves this path for calendar features. This series has no timestamps, so an embedding of the external variables takes its place, in both the encoder and the decoder.
+    \begin{itemize}
+      \item In the official model this path is the \emph{only} per-step input that reaches the decoder's 168 future positions, since \texttt{forward} ignores the values of \texttt{x\_dec}. So this is where known-future information has to enter.
+      \item The search started with the official per-step linear embedding. The final model uses a kernel-5 \texttt{Conv1d} with replicate padding, which gives each position a few steps of covariate context (Section 2.5).
+    \end{itemize}
+  \item \textbf{Delays are chosen per example} in training too, not shared across the batch.
+  \item \textbf{Aggregation reads from $t-\tau$.} This matches $R(\tau)=\sum_t q_t k_{t-\tau}$ and the Task 1 convention; the official code rolls by $-\tau$.
+\end{itemize}
+
+\textbf{Anchoring (final model).} The last observed value is subtracted from the input window and added back to the output. This is Task 1's anchoring, applied here to the log-scaled target (Section 2.5).
+
+\textbf{Training.} MSE on the transformed target, Adam, and a learning rate halved every epoch (as in the official \texttt{lradj=type1}). Every origin is used at stride 1, with a batch size of 64 and gradient clipping at 1. Early stopping uses the validation block RMSE with a patience of 2.
+
+\input{task2_results}

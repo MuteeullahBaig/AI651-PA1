@@ -1,0 +1,15 @@
+[s3_eng] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 1}
+[s3_eng] params 6145 | block RMSE 69.93 ± 5.97 | MAE 48.98 | sMAPE 56.6 | best epochs [7, 2, 2]
+[s3_ck5] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'base', 'cov_kernel': 5}
+[s3_ck5] params 7137 | block RMSE 64.39 ± 3.76 | MAE 44.69 | sMAPE 52.5 | best epochs [2, 1, 1]
+[s3_eng_ck5] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 5}
+[s3_eng_ck5] params 8577 | block RMSE 62.62 ± 4.20 | MAE 43.73 | sMAPE 49.5 | best epochs [3, 3, 1]
+[s3_eng_ck9] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'eng', 'cov_kernel': 9}
+[s3_eng_ck9] params 11009 | block RMSE 62.63 ± 1.35 | MAE 42.88 | sMAPE 49.3 | best epochs [5, 1, 1]
+[s3_noEF] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'noEF', 'cov_kernel': 1}
+[s3_noEF] params 5793 | block RMSE 66.70 ± 3.00 | MAE 45.69 | sMAPE 52.8 | best epochs [3, 2, 1]
+[s3_dl2] {'seq_len': 168, 'label_len': 84, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 2, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'base', 'cov_kernel': 1}
+[s3_dl2] params 9105 | block RMSE 64.80 ± 2.61 | MAE 44.40 | sMAPE 53.8 | best epochs [2, 1, 3]
+[s3_lab168] {'seq_len': 168, 'label_len': 168, 'd_model': 16, 'n_heads': 4, 'e_layers': 1, 'd_layers': 1, 'd_ff': 32, 'kernel': 25, 'factor': 1.0, 'dropout': 0.05, 'target': 'log', 'cov_mode': 'future', 'lr': 0.001, 'batch': 64, 'stride': 1, 'lr_decay': 0.5, 'feature_set': 'base', 'cov_kernel': 1}
+[s3_lab168] params 5857 | block RMSE 65.38 ± 1.92 | MAE 46.38 | sMAPE 54.1 | best epochs [7, 3, 3]
+SWEEP DONE

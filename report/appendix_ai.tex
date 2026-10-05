@@ -1,0 +1,36 @@
+\section*{Appendix -- use of generative AI}
+
+As the course policy requires, this appendix records the prompts, what the AI produced, and what I changed. The
+tool was Claude (Anthropic), used through Claude Code with access to my assignment folder, between 25 September and 5 October 2026. The running log is in \path{AI_USAGE.md} in the repository.
+
+\begin{enumerate}
+  \item \textbf{Prompt:} ``Go through the assignment resources and prepare the 5 iteration study guide to prepare me to attempt this assignment \ldots\ teach me about the background knowledge required \ldots\ give me an estimate on how long will this assignment take?''\\
+  \textbf{Output:} A five-part interactive study guide with practice notebooks on forecasting setup, Attention, moving-average decomposition, delay mixing and Autoformer, plus a time estimate.\\
+  \textbf{Use:} Study material only; nothing from it is submitted.
+
+  \item \textbf{Prompt:} ``Lets proceed with attempting the actual assignment \ldots\ we can develop the plan and work on it \ldots\ do as you think is the best \ldots\ I'll learn once we've completed the assignment.''\\
+  \textbf{Output:} Everything below was produced by the AI in response to this prompt.
+  \begin{itemize}
+    \item \emph{Task 1:} the Response 1A and 4(a) predictions, written before any cell ran (\path{task1/predictions_before_running.md}); the three notebook implementations; a headless notebook runner; the full-preset run; the deployment choices, made from the validation summary before Output 4.3; a supplementary validation-only analysis; and drafts of Responses 1A--4.
+    \item \emph{Task 2:} exploratory analysis; a compact Autoformer written from the paper and the official repository's structure; a leakage-safe rolling-origin validation; baselines; a linear covariate probe; seven stages of seeded experiments, including the negative results; the covariate ablation; the final refit and forecast.
+    \item \emph{Report:} this LaTeX report.
+  \end{itemize}
+
+  \item \textbf{Prompts:} the leaderboard results of attempt 1, and later of attempt 2, pasted from the leaderboard site.\\
+  \textbf{Output:} The AI updated the report. After attempt 1 showed the size and epoch penalty was tiny, it checked on the validation blocks that averaging five seeds helps, and prepared that forecast (\path{task2/src/ensemble.py}). It recommended stopping after two attempts.\\
+  \textbf{Use:} I submitted both attempts myself. Attempt 1 remains the counted best.
+
+  \item \textbf{Prompt:} ``please review the assignment document and submission and make sure nothing is incomplete \ldots''\\
+  \textbf{Output:} A requirement-by-requirement review against the handout, which led to five changes:
+  \begin{itemize}
+    \item station-4 per-product results added to Response 1A;
+    \item population and split named for every claim;
+    \item Response 4 brought within 200 words, with the numbers moved into tables;
+    \item an explicit worked-example check in Response 3;
+    \item the Task 2 model description updated, and a references section added.
+  \end{itemize}
+
+  \textbf{My edits:} \todo{Record here what you checked, changed or rewrote after reviewing each part, e.g.\ which Responses you reworded, which numbers you re-derived from the notebook, and any design decision you would defend differently.}
+\end{enumerate}
+
+\textbf{How the AI's work was verified.} The notebook's own checks passed for all three implementations, and the worked examples reproduce $[35,15,25,25]$ and the expected trend. Every number in this report is read from the executed notebook, its exported CSV files, the JSON logs in \path{task2/results/}, or the leaderboard site.

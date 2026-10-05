@@ -1,0 +1,33 @@
+{
+ "edges": [
+  5.769996477505417,
+  7.943452369061619
+ ],
+ "rmse": {
+  "Raw Attention": {
+   "low drift": 0.4714394739868598,
+   "middle": 0.4051561245145023,
+   "high drift": 0.33438649242730145
+  },
+  "Raw delay mixer": {
+   "low drift": 0.2161739061583147,
+   "middle": 0.25534693803258546,
+   "high drift": 0.20028161600368158
+  },
+  "Attention + decomposition": {
+   "low drift": 0.2852514981383084,
+   "middle": 0.2973707313309583,
+   "high drift": 0.3139799601417598
+  },
+  "Autoformer-inspired": {
+   "low drift": 0.20314667129469344,
+   "middle": 0.18868314186946206,
+   "high drift": 0.19762753159052185
+  },
+  "Period-routed ridge": {
+   "low drift": 0.1676130643328546,
+   "middle": 0.16740191517076336,
+   "high drift": 0.16273310351842704
+  }
+ }
+}

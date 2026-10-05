@@ -1,0 +1,37 @@
+{
+ "config": {
+  "seq_len": 168,
+  "label_len": 84,
+  "d_model": 16,
+  "n_heads": 4,
+  "e_layers": 1,
+  "d_layers": 1,
+  "d_ff": 32,
+  "kernel": 25,
+  "factor": 1.0,
+  "dropout": 0.05,
+  "target": "log",
+  "cov_mode": "future",
+  "lr": 0.001,
+  "batch": 64,
+  "stride": 1,
+  "lr_decay": 0.5,
+  "feature_set": "eng",
+  "cov_kernel": 5,
+  "anchor": 1,
+  "trend_init": "mean"
+ },
+ "seed": 2,
+ "trainable_parameters_P": 8577,
+ "epochs_refit_on_full_history": 2,
+ "epochs_of_validation_run_that_chose_them": 6,
+ "declared_epochs_E": 8,
+ "refit_seconds": 16.348819699982414,
+ "last_observed_values": [
+  20.00000762939453,
+  23.0000057220459,
+  16.000003814697266,
+  17.0,
+  18.0
+ ]
+}

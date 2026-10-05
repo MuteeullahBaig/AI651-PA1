@@ -1,0 +1,54 @@
+C:\Users\Matee\miniconda3\envs\gpu_env\Lib\site-packages\zmq\_future.py:718: RuntimeWarning: Proactor event loop does not implement add_reader family of methods required for zmq. Registering an additional selector thread for add_reader support via tornado. Use `asyncio.set_event_loop_policy(WindowsSelectorEventLoopPolicy())` to avoid this warning.
+  self._get_loop()
+--- cell 3 (2.6s)
+   Four-station product-line world checks passed.
+   preset=full; data seed=0; model seed=0; device=cuda
+   sampling rate=20 Hz; products=Product A, Product B, Product C
+   product pace ranges=[[14.0, 18.0], [21.0, 27.0], [28.0, 36.0]] samples; established stations=3; held-out station=4
+   eligible train/validation/test origins: 650/105/105
+--- cell 6 (0.0s)
+--- cell 7 (0.0s)
+   Raw-Attention assembly and gradient checks passed.
+--- cell 9 (53.3s)
+   Raw Attention: 6000 steps, 53.1s, 368368 parameters, best established-validation MSE 0.166 (m/s²)² -- same physical units as the report tables below
+   Raw Attention: saved raw-attention-full-data0-model0-076de07f9c47.pt
+   Output 1.1
+--- cell 10 (0.8s)
+   Output 1.2
+--- cell 11 (1.2s)
+   Output 1.3
+--- cell 13 (0.0s)
+--- cell 14 (0.0s)
+--- cell 15 (1.1s)
+   Decomposition checks passed.
+   Decomposed-Attention assembly and gradient checks passed.
+   Output 2.1
+   Output 2.2
+--- cell 16 (71.1s)
+   Attention + decomposition: 6000 steps, 70.4s, 373024 parameters, best established-validation MSE 0.089 (m/s²)² -- same physical units as the report tables below
+   Attention + decomposition: saved attention-decomposition-full-data0-model0-23325a0824fe.pt
+   Output 2.3
+--- cell 19 (0.0s)
+--- cell 20 (0.0s)
+   FFT delay-score checks passed.
+   Output 3.1
+--- cell 22 (0.0s)
+--- cell 23 (0.0s)
+   Delay-aggregation checks passed.
+--- cell 25 (0.0s)
+--- cell 27 (1.0s)
+   Output 3.2
+--- cell 29 (145.7s)
+   Model assembly and gradient checks passed (4 setting(s): raw/attention, raw/delay, decomposed/attention, decomposed/delay).
+   Raw delay mixer: 6000 steps, 70.3s, 368370 parameters, best established-validation MSE 0.051 (m/s²)² -- same physical units as the report tables below
+   Raw delay mixer: saved raw-delay-mixer-full-data0-model0-c5eb6cf5e246.pt
+   Autoformer-inspired: 6000 steps, 74.8s, 373026 parameters, best established-validation MSE 0.039 (m/s²)² -- same physical units as the report tables below
+   Autoformer-inspired: saved autoformer-inspired-full-data0-model0-3f6ddcff9b7b.pt
+   Output 4.1
+--- cell 30 (0.4s)
+   Output 4.2
+--- cell 32 (0.1s)
+--- cell 33 (0.0s)
+--- cell 34 (0.0s)
+   Output 4.3
+saved Assignment1_executed.ipynb; total 280.1s
